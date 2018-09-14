@@ -5,11 +5,14 @@ import android.app.IntentService;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.tianyi.sensenote.bean.UserBean;
 import com.example.tianyi.sensenote.service.InitializeService;
 
 public class SenseNoteApplication extends Application {
 
-    public static RequestQueue queues;
+    private RequestQueue queues;
+
+    private UserBean userBean;
 
     @Override
     public void onCreate() {
@@ -18,8 +21,11 @@ public class SenseNoteApplication extends Application {
         InitializeService.start(this);
     }
 
-    public static RequestQueue getHttpQueues(){
+    public RequestQueue getHttpQueues(){
         return queues;
     }
 
+    public UserBean getUserBean() {
+        return userBean;
+    }
 }

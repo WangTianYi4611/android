@@ -3,4 +3,7 @@
     <string name="question_1">叔叔帅不帅</string>
     <string name="question_1_answer">答案显示在此处</string>
     <string name="show_answer">显示答案</string>
+    <string name="forget_password"><b>忘记密码？</b></string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
 </resources>

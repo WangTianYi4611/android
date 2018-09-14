@@ -49,7 +49,7 @@ public class QuestionFragment extends Fragment {
         return v;
     }
 
-    public static void volleyStringRequestGet() {
+    public void volleyStringRequestGet() {
         String url = "http://apis.juhe.cn/mobile/get?phone=13160863974&key=335adcc4e891ba4e4be6d7534fd54c5d";
         // 这是StringRequest的请求方式
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -69,6 +69,6 @@ public class QuestionFragment extends Fragment {
             }
         });
         // 将请求添加到请求队列中
-        SenseNoteApplication.getHttpQueues().add(request);
+        ((SenseNoteApplication) getActivity().getApplicationContext()).getHttpQueues().add(request);
     }
 }
