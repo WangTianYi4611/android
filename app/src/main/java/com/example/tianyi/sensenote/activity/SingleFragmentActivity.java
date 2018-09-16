@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.tianyi.sensenote.R;
@@ -17,16 +18,14 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fm =getSupportFragmentManager();
-        Fragment fragement = fm.findFragmentById(R.id.fragment_container);
-
+        FragmentManager manager =getSupportFragmentManager();
+        Fragment fragement = manager.findFragmentById(R.id.fragment_container);
+        FragmentTransaction transaction = manager.beginTransaction();
         if(fragement == null){
             fragement = createFragment();
-            fm.beginTransaction().add(R.id.fragment_container,fragement).commit();
+            transaction.add(R.id.fragment_container,fragement).commit();
         }
 
     }
-
-
 
 }

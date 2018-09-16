@@ -11,8 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.tianyi.sensenote.InterfaceImpl.LoginInterfaceImpl;
 import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.activity.LoginActivity;
+import com.example.tianyi.sensenote.activity.MainActivity;
+import com.example.tianyi.sensenote.application.SenseNoteApplication;
+import com.example.tianyi.sensenote.bean.UserBean;
+import com.example.tianyi.sensenote.interfaces.LoginInterface;
+import com.example.tianyi.sensenote.po.BasicResult;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class SplashFragment extends Fragment {
 
@@ -51,7 +62,7 @@ public class SplashFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                startLoginActivity();
+                startLoginOrMainActivity();
             }
         }.start();
 
@@ -59,7 +70,7 @@ public class SplashFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 countDownTimer.cancel();
-                startLoginActivity();
+                startLoginOrMainActivity();
             }
         });
 
@@ -67,10 +78,21 @@ public class SplashFragment extends Fragment {
     }
 
 
-    private void startLoginActivity(){
-        Intent intent = LoginActivity.newIntent(getActivity());
-        startActivity(intent);
+    private void startLoginOrMainActivity(){
+        UserBean user = SenseNoteApplication.getInstance().getUserBean();
+        LoginInterface loginInterface = new LoginInterfaceImpl();
+        //boolean success = loginInterface.checkTokenValid(user);
+        boolean success =false;
+        if(success){
+            Intent intent = MainActivity.newIntent(getActivity());
+            startActivity(intent);
+        }else{
+            Intent intent = LoginActivity.newIntent(getActivity());
+            startActivity(intent);
+        }
         getActivity().finish();
     }
+
+
 
 }

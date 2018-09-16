@@ -42,33 +42,11 @@ public class QuestionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ansnwer.setText("帅！！！！啊啊啊啊！！！帅！！！！");
-                volleyStringRequestGet();
+
             }
         });
 
         return v;
     }
 
-    public void volleyStringRequestGet() {
-        String url = "http://apis.juhe.cn/mobile/get?phone=13160863974&key=335adcc4e891ba4e4be6d7534fd54c5d";
-        // 这是StringRequest的请求方式
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    // 请求成功的回调
-                    @Override
-                    public void onResponse(String arg0) {
-                        Log.e("TAG", arg0);
-
-                    }
-                }, new Response.ErrorListener() {
-            // 请求失败的回调
-            @Override
-            public void onErrorResponse(VolleyError arg0) {
-                Log.e("TAG", arg0.toString());
-
-            }
-        });
-        // 将请求添加到请求队列中
-        ((SenseNoteApplication) getActivity().getApplicationContext()).getHttpQueues().add(request);
-    }
 }

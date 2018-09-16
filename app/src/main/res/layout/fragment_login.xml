@@ -13,7 +13,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="97dp"
         android:layout_marginStart="97dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/f"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,36 +24,18 @@
     <EditText
         android:id="@+id/edtTxt_login_username"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="45dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="32dp"
+        android:drawablePadding="4dp"
         android:ems="10"
         android:hint="请输入用户名"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/f" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="276dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/user_name_icon" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="40dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="25dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:srcCompat="@drawable/password_icon" />
 
     <TextView
         android:id="@+id/f"
@@ -75,13 +57,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="44dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="45dp"
         android:layout_marginTop="17dp"
+        android:drawablePadding="4dp"
         android:ems="10"
         android:hint="请输入密码"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTxt_login_username" />
 
     <Button
@@ -116,14 +99,14 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
         android:layout_marginEnd="157dp"
         android:layout_marginStart="157dp"
+        android:layout_marginTop="19dp"
         android:text="@string/forget_password"
         android:textColor="@color/blue"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"

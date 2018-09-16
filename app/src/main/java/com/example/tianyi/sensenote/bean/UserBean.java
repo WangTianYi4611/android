@@ -1,7 +1,9 @@
 package com.example.tianyi.sensenote.bean;
 
-public class UserBean {
+import java.io.Serializable;
 
+public class UserBean implements Serializable{
+    private static final long serialVersionUID = 1L;
     private String userName;
     private String userChineseName;
     private String email;
