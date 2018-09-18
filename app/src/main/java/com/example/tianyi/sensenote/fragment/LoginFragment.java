@@ -2,6 +2,8 @@ package com.example.tianyi.sensenote.fragment;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -47,18 +50,37 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginFragment extends Fragment {
 
 
+
     private Button loginButton;
     private Button registerButton;
     private EditText userNameEdtTxt;
     private EditText passWordEdtTxt;
     private TextView forgetPassWord;
-    private RequestQueue queues;
     private SharedPreferenceUtil sharedPreferenceUtil;
     private static final String LOGIN_PREFERENCE_NAME = "login";
+    public static final int LOGIN_SUCCESS = 1;
+    public static final int LOGIN_FAIL = 2;
+    private Handler loginHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case LOGIN_SUCCESS:
+                    onLoginSuccessCallback((UserBean) msg.obj);
+                    break;
+                case LOGIN_FAIL:
+                    Toast.makeText(getContext(),msg.obj.toString(),Toast.LENGTH_LONG).show();
+                    break;
+                case NetworkUtil.NETWORK_UNAVAILABLE:
+                    Toast.makeText(getContext(),R.string.network_unavailable_string,Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((LoginActivity) getActivity()).getSupportActionBar().hide();
     }
 
     public static LoginFragment newInstance(){
@@ -74,8 +96,8 @@ public class LoginFragment extends Fragment {
         userNameEdtTxt = v.findViewById(R.id.edtTxt_login_username);
         passWordEdtTxt = v.findViewById(R.id.edtTxt_login_password);
 
-        setEditTextDrawableLeft(R.drawable.user_name_icon,userNameEdtTxt);
-        setEditTextDrawableLeft(R.drawable.password_icon,passWordEdtTxt);
+        BitMapUtil.setEditTextDrawableLeft(getContext(),R.drawable.user_name_icon,userNameEdtTxt);
+        BitMapUtil.setEditTextDrawableLeft(getContext(),R.drawable.password_icon,passWordEdtTxt);
         sharedPreferenceUtil = new SharedPreferenceUtil(getActivity(),LOGIN_PREFERENCE_NAME);
         recoverSharedPreference();
 
@@ -108,32 +130,8 @@ public class LoginFragment extends Fragment {
         sharedPreferenceUtil.put("userName",userName);;
         sharedPreferenceUtil.put("password",passWord);
         LoginInterface loginInterface = new LoginInterfaceImpl();
-        Callback<BasicResult<UserBean>> callback = new Callback<BasicResult<UserBean>>() {
-            @Override
-            public void onResponse(Call<BasicResult<UserBean>> call, Response<BasicResult<UserBean>> response) {
-                Log.i("login",response.body().toString());
-                BasicResult<UserBean> result = response.body();
-                if(BasicResult.SUCCESS == result.getCode()){
-                    UserBean user = result.getSingleResult();
-                    SenseNoteApplication.getInstance().setUserBean(user);
-                    SaveToLocalUtil.saveObject(getActivity().getFilesDir().getPath().toString()+SaveToLocalUtil.USER_TOKEN_FILE,user); //用户信息存储到文件中
-                    //启动activity
-                    startActivity(MainActivity.newIntent(getActivity()));
-                    Toast.makeText(getContext(),"登录成功",Toast.LENGTH_LONG);
-                    getActivity().finish();
-                }else{
-                    StringBuffer failMsg = new StringBuffer();
-                    failMsg.append("登录失败:").append(result.getMsg());
-                    Toast.makeText(getContext(),failMsg,Toast.LENGTH_LONG);
-                }
-            }
-            @Override
-            public void onFailure(Call<BasicResult<UserBean>> call, Throwable t) {
-                Log.i("login",t.toString());
-                Toast.makeText(getContext(),"未知错误",Toast.LENGTH_LONG);
-            }
-        };
-        loginInterface.userCheckIn(callback,userName,passWord);
+
+        loginInterface.userCheckIn(loginHandler,userName,passWord);
     }
 
     private void recoverSharedPreference() {
@@ -145,10 +143,13 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    public void setEditTextDrawableLeft(Integer resourceId,EditText editText){
-        Drawable drawable = BitMapUtil.zoomDrawable(getResources().getDrawable(resourceId),180,180);
-        editText.setCompoundDrawablesWithIntrinsicBounds(drawable,null,null,null);
+
+    private void onLoginSuccessCallback(UserBean user) {
+        SenseNoteApplication.getInstance().setUserBean(user);
+        SaveToLocalUtil.saveObject(getActivity().getFilesDir().getPath().toString()+SaveToLocalUtil.USER_TOKEN_FILE,user); //用户信息存储到文件中
+        //启动activity
+        startActivity(MainActivity.newIntent(getActivity()));
+        Toast.makeText(getContext(),"登录成功",Toast.LENGTH_LONG).show();
+        getActivity().finish();
     }
-
-
 }

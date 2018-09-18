@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 
 import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.fragment.LoginFragment;
@@ -27,6 +28,15 @@ public class LoginActivity extends SingleFragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.fragment_container,RegisterFragment.newInstance());
+        //transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+
+    public void setLoginFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fragment_container,LoginFragment.newInstance());
         //transaction.addToBackStack(null);
         transaction.commit();
     }

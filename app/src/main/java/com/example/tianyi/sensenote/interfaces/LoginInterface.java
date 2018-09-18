@@ -1,14 +1,15 @@
 package com.example.tianyi.sensenote.interfaces;
 
-import com.example.tianyi.sensenote.bean.UserBean;
-import com.example.tianyi.sensenote.po.BasicResult;
+import android.os.Handler;
 
-import retrofit2.Callback;
+import com.example.tianyi.sensenote.bean.UserBean;
 
 public interface LoginInterface {
 
     boolean checkTokenValid(UserBean user);
 
-    void userCheckIn(Callback<BasicResult<UserBean>> callback, String userName, String passWord);
+    void userCheckIn(Handler handler, String userName, String passWord);
+
+    void registerNewUser(Handler user, UserBean callback);
 
 }

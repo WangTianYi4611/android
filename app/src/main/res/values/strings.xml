@@ -6,4 +6,6 @@
     <string name="forget_password"><b>忘记密码？</b></string>
     <string name="login">登录</string>
     <string name="register">注册</string>
+    <string name="network_unavailable_string">网络不可用,请稍后再试</string>
+    <string name="register_success">注册成功</string>
 </resources>

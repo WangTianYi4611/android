@@ -1,11 +1,13 @@
 package com.example.tianyi.sensenote.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.widget.EditText;
 
 public class BitMapUtil {
 
@@ -32,6 +34,11 @@ public class BitMapUtil {
         drawable.setBounds(0, 0, width, height);
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public static void setEditTextDrawableLeft(Context context,Integer resourceId, EditText editText){
+        Drawable drawable = BitMapUtil.zoomDrawable(context.getResources().getDrawable(resourceId),180,180);
+        editText.setCompoundDrawablesWithIntrinsicBounds(drawable,null,null,null);
     }
 
 }
