@@ -8,4 +8,6 @@
     <string name="register">注册</string>
     <string name="network_unavailable_string">网络不可用,请稍后再试</string>
     <string name="register_success">注册成功</string>
+    <string name="all_note">全部笔记本(0)</string>
+    <string name="notebook">笔记本</string>
 </resources>

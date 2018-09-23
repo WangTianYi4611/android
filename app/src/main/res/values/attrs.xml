@@ -13,4 +13,7 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="NoteBookFrameLayout">
+        <attr name = "custom_header_height" format = "color" />
+    </declare-styleable>
 </resources>

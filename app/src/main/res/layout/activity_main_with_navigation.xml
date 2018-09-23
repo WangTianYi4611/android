@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+
+        <FrameLayout
+            android:id="@+id/layFrame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            ></FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/txtView_main_note"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/icon_note_fill"
+            android:gravity="center_horizontal"
+            android:text="笔记本"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/txtView_main_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/icon_note"
+            android:gravity="center_horizontal"
+            android:text="搜索"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/txtView_main_news"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/icon_note"
+            android:gravity="center_horizontal"
+            android:text="新闻"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/txtView_main_control"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/icon_note"
+            android:gravity="center_horizontal"
+            android:text="个人信息"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+
+</LinearLayout>

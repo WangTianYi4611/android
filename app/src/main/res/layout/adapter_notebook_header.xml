@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_marginTop="8dp">
+
+    <TextView
+        android:id="@+id/textView_notebook_allnote"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:drawableLeft="@drawable/icon_note_notebook"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:text="@string/all_note"
+        android:textSize="16sp"
+        android:typeface="monospace" />
+
+</FrameLayout>

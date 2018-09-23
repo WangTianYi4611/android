@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
+
 import com.example.tianyi.sensenote.InterfaceImpl.LoginInterfaceImpl;
 import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.activity.LoginActivity;

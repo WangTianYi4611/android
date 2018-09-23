@@ -26,7 +26,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
             fragement = createFragment();
             transaction.add(R.id.fragment_container,fragement).commit();
         }
-
+        
     }
 
 
