@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.tianyi.sensenote.viewgroup.SwipeLeftLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler_swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="55dp"
     android:layout_marginLeft="20dp"
@@ -15,4 +16,4 @@
         android:gravity="center_vertical"
         android:text="@string/all_note"
         android:textSize="15sp" />
-</LinearLayout>
+</com.example.tianyi.sensenote.viewgroup.SwipeLeftLinearLayout>

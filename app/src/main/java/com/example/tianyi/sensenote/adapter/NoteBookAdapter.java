@@ -1,43 +1,41 @@
 package com.example.tianyi.sensenote.adapter;
 
-import android.app.Activity;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.activity.AddNoteActivity;
-import com.example.tianyi.sensenote.fragment.AddNoteBookFragment;
-import com.example.tianyi.sensenote.fragment.LoginFragment;
+import com.example.tianyi.sensenote.bean.NoteBookBean;
+import com.example.tianyi.sensenote.presenter.impl.NoteBookPresenter;
+import com.example.tianyi.sensenote.presenter.interfaces.INoteBookPresenter;
+import com.example.tianyi.sensenote.viewgroup.SwipeLeftLinearLayout;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_NORMAL = 2;
-    private List<String> items;
+    private List<NoteBookBean>  noteBooks;
     private Context context;
     private View headerView;
 
-
-
-    public NoteBookAdapter(List<String> items,Context context) {
-        this.items = items;
+    public NoteBookAdapter(Context context) {
+        this.noteBooks = new ArrayList<>();
         this.context = context;
     }
 
@@ -58,8 +56,11 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        if(getItemViewType(position)  == TYPE_NORMAL) {
-            ((NoteBookItemViewHolder) viewHolder).setNoteBookTitile(items.get(position - 1));
+        if(headerView == null){
+            ((NoteBookItemViewHolder) viewHolder).setNoteBook(noteBooks.get(position),position);
+            return;
+        } else if(getItemViewType(position)  == TYPE_NORMAL) {
+            ((NoteBookItemViewHolder) viewHolder).setNoteBook(noteBooks.get(position - 1),position);
         }
     }
 
@@ -69,7 +70,7 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     public boolean hasHeader(int pos) {
-        if (pos == 1) {
+        if ((headerView != null && pos == 1) || (headerView == null && pos == 0)) {
             return true;
         } else {
             return false;
@@ -96,26 +97,57 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return (headerView == null) ? items.size() : items.size() + 1;
+        return (headerView == null) ? noteBooks.size() : noteBooks.size() + 1;
     }
 
     public class NoteBookItemViewHolder extends RecyclerView.ViewHolder{
 
         private TextView noteBookTextView;
+        private TextView deleteTextView;
+        private SwipeLeftLinearLayout swipeLeftLinearLayout;
+        private NoteBookBean noteBookBean;
+        private int position;
 
         public NoteBookItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.swipeLeftLinearLayout = (SwipeLeftLinearLayout) itemView;
+            initSwipeItem();
             noteBookTextView = itemView.findViewById(R.id.textView_notebook_item);
             noteBookTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(context, "note item click", Toast.LENGTH_SHORT).show();
+                    swipeLeftLinearLayout.closeSwipe();
                 }
             });
         }
 
-        public void setNoteBookTitile(String title){
+        private void initSwipeItem() {
+            TextView deleteView = new TextView(context);
+            deleteView.setLayoutParams(new LinearLayout.LayoutParams(120, ActionBar.LayoutParams.MATCH_PARENT));
+            deleteView.setText("删除");
+            deleteView.setBackgroundColor(context.getResources().getColor(R.color.red));
+            deleteView.setGravity(Gravity.CENTER);
+            swipeLeftLinearLayout.addSwipeItem(deleteView,200);
+            deleteView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    NoteBookPresenter.getInstance().deleteNoteBook(noteBookBean.getId());
+                    notifyDataSetChanged();
+                    return true;
+                }
+            });
+            this.deleteTextView = deleteView;
+        }
+
+        public void setNoteBook(NoteBookBean noteBook,int position){
+            this.position = position;
+            this.noteBookBean = noteBook;
+            String title = new StringBuffer(noteBook.getNoteBookName()).
+                    append("(").append(noteBook.getCount()).
+                    append(")").toString();
             noteBookTextView.setText(title);
+            swipeLeftLinearLayout.closeSwipeInstantly();
         }
     }
 
@@ -166,10 +198,16 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setHeaderView(View headerView) {
         this.headerView=headerView;
         notifyItemInserted(0);
-
     }
 
+    public void removeHeaderView(){
+        this.headerView = null;
+        notifyItemRemoved(0);
+    }
 
-
+    public void setNoteBooks(List<NoteBookBean> noteBooks) {
+        this.noteBooks = noteBooks;
+        notifyDataSetChanged();
+    }
 
 }

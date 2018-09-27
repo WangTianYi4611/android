@@ -20,11 +20,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AddNoteActivity extends SingleFragmentActivity {
-
-    @BindView(R.id.txtView_addNoteMenu_cancel)
-    public TextView cancelTextView;
-    @BindView(R.id.txtView_addNoteMenu_create)
-    public TextView createTextView;
+//
+//    @BindView(R.id.txtView_addNoteMenu_cancel)
+//    public TextView cancelTextView;
+//    @BindView(R.id.txtView_addNoteMenu_create)
+//    public TextView createTextView;
 
 
     @Override
@@ -46,12 +46,14 @@ public class AddNoteActivity extends SingleFragmentActivity {
     }
 
     private void initView() {
-        cancelTextView.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        cancelTextView.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
+//
+
     }
 
 

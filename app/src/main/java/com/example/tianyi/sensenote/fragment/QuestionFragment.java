@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,17 @@ public class QuestionFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCustomActionBar();
+    }
+    private void setCustomActionBar() {
+        ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        View mActionBarView= LayoutInflater.from(getActivity()).inflate(R.layout.add_note_menu_layout,null);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setCustomView(mActionBarView,lp);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
     }
 
     @Nullable

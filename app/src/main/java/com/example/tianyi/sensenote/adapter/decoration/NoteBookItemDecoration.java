@@ -206,13 +206,14 @@ public class NoteBookItemDecoration extends RecyclerView.ItemDecoration{
 
     public boolean findHeaderClickView(RecyclerView parent,View view, int x, int y) {
         if (view == null) return false;
+        NoteBookAdapter adapter = (NoteBookAdapter)parent.getAdapter();
         if (headerRect.contains(x, y)) {
             Rect vRect = new Rect();
             // 需要响应点击事件的区域在屏幕上的坐标
             View topView = parent.getChildAt(0);
             int topViewPostion = parent.getChildAdapterPosition(topView);
             int top = view.getTop();
-            if(topViewPostion == 0){
+            if(topViewPostion == 0 && adapter.getHeaderView() != null){
                 top += topView.getBottom();
             }
             vRect.set(vRect.left + view.getLeft(), vRect.top + top, vRect.left + view.getLeft() + view.getWidth(), vRect.top + top + view.getHeight());

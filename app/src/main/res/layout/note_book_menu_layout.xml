@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditText
+        android:id="@+id/edtTxt_noteMenu_search"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="8"
+        android:hint="输入笔记本名称进行查询"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/textView_notebook_search_cancel"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="取消"
+        android:textSize="15sp"
+        android:visibility="gone" />
+
+</LinearLayout>
