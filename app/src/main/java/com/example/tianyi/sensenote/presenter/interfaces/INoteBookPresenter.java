@@ -11,8 +11,12 @@ public interface INoteBookPresenter {
 
     void deleteNoteBook(Long id);
 
-    List<NoteBookBean> getAllNoteBook();
+    List<NoteBookBean> getAllNoteBook(boolean refresh);
+
+    List<NoteBookBean> getChooseNoteBook();
 
     List<NoteBookBean> getSearchNoteBook(String noteBookName);
+
+    NoteBookBean getDefaultNoteBook();
 
 }

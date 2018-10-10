@@ -22,7 +22,7 @@ android {
 }
 
 greendao {
-    schemaVersion 1
+    schemaVersion 2
     daoPackage "com.example.tianyi.sensenote.dao" // set package of generated classes
 }
 
@@ -44,4 +44,11 @@ dependencies {
     implementation 'org.greenrobot:greendao:3.2.2' // add library
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation "io.reactivex.rxjava2:rxjava:2.2.2"
+    implementation ('com.github.sendtion:XRichText:1.5'){
+        exclude group: 'com.android.support'
+        exclude group: 'com.github.bumptech.glide'
+    }
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.jakewharton:disklrucache:2.0.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 }

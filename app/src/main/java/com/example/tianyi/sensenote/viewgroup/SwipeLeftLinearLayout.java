@@ -111,7 +111,7 @@ public class SwipeLeftLinearLayout extends LinearLayout{
                 break;
             }
         }
-        return intercept == 1 || isSwipeViewShown;
+        return (intercept == 1 || isSwipeViewShown);
         //return true;
     }
 
@@ -142,6 +142,7 @@ public class SwipeLeftLinearLayout extends LinearLayout{
         }
         //Log.i("touch","onTouch");
         mVelocityTracker.addMovement(ev);
+       // if(mSwipeViews.size() == 0) return true;
         switch (ev.getAction()){
             case MotionEvent.ACTION_DOWN:{
                 if(!mScroller.isFinished()){
@@ -244,6 +245,11 @@ public class SwipeLeftLinearLayout extends LinearLayout{
     public void closeSwipeInstantly(){
         scrollTo(0, 0);
         isSwipeViewShown = false;
+    }
+
+    public void clearSwipeView(){
+        mSwipeViews.clear();
+        //requestLayout();
     }
 
 

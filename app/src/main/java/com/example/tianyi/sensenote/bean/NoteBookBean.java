@@ -1,7 +1,9 @@
 package com.example.tianyi.sensenote.bean;
 
-public class NoteBookBean {
+import java.io.Serializable;
 
+public class NoteBookBean implements Serializable{
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String noteBookName;
     private Integer count;

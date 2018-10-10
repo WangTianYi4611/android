@@ -14,20 +14,20 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
+    protected FragmentManager manager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager manager =getSupportFragmentManager();
+        manager =getSupportFragmentManager();
         Fragment fragement = manager.findFragmentById(R.id.fragment_container);
         FragmentTransaction transaction = manager.beginTransaction();
         if(fragement == null){
             fragement = createFragment();
             transaction.add(R.id.fragment_container,fragement).commit();
         }
-        
     }
-
 
 }

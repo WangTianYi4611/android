@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white"
-    android:orientation="horizontal"
-    android:layout_marginRight="10dp"
     android:layout_marginLeft="10dp"
-
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_marginRight="10dp"
+    android:animateLayoutChanges="true"
+    android:background="@color/white"
+    android:orientation="horizontal">
 
     <EditText
         android:id="@+id/edtTxt_noteMenu_search"
@@ -26,8 +25,8 @@
         android:id="@+id/textView_notebook_search_cancel"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:gravity="center_vertical|center_horizontal"
         android:text="取消"

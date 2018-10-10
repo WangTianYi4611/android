@@ -33,6 +33,7 @@ public class NoteBookPresenter implements INoteBookPresenter {
     public NoteBookPresenter() {
         this.mContext = SenseNoteApplication.getInstance().getApplicationContext();
         this.noteBookEntityDao = ((SenseNoteApplication) mContext).getDaoSession().getNoteBookEntityDao();
+
     }
 
     public static NoteBookPresenter getInstance(){
@@ -54,9 +55,9 @@ public class NoteBookPresenter implements INoteBookPresenter {
         noteBookEntityDao.insert(noteBookEntity);
         Log.i("database","insert success");
         if(allNoteBooks == null){
-            allNoteBooks = getAllNoteBook();
+            allNoteBooks = getAllNoteBook(true);
         }
-        allNoteBooks.add(convertEntityToBean(noteBookEntity));
+        allNoteBooks.add(allNoteBooks.size() -1 ,convertEntityToBean(noteBookEntity));
         //Log.i("database","cur note book :" + noteBookEntityDao.queryBuilder().list().toString());
         return true;
     }
@@ -74,14 +75,27 @@ public class NoteBookPresenter implements INoteBookPresenter {
     }
 
     @Override
-    public List<NoteBookBean> getAllNoteBook() {
-        if(!CollectionUtils.isEmpty(allNoteBooks)) return allNoteBooks;
+    public List<NoteBookBean> getAllNoteBook(boolean refresh) {
+        if(!refresh && !CollectionUtils.isEmpty(allNoteBooks)) return allNoteBooks;
         allNoteBooks = new ArrayList<>();
         List<NoteBookEntity> allNoteBookEntites = noteBookEntityDao.loadAll();
         for(NoteBookEntity noteBookEntity:allNoteBookEntites){
             allNoteBooks.add(convertEntityToBean(noteBookEntity));
         }
+        NoteBookBean noteBookBean = new NoteBookBean();
+        noteBookBean.setNoteBookName("废纸篓");
+        noteBookBean.setCount(0);
+        allNoteBooks.add(noteBookBean);
         return allNoteBooks;
+    }
+
+    @Override
+    public List<NoteBookBean> getChooseNoteBook() {
+        return new ArrayList<>(allNoteBooks.subList(0,allNoteBooks.size() - 1));
+    }
+
+    public void refreshAllNoteBook(){
+
     }
 
     @Override
@@ -93,6 +107,11 @@ public class NoteBookPresenter implements INoteBookPresenter {
             }
         }
         return searchNoteBooks;
+    }
+
+    @Override
+    public NoteBookBean getDefaultNoteBook() {
+        return allNoteBooks.get(0);
     }
 
     private NoteBookBean convertEntityToBean(NoteBookEntity noteBookEntity) {

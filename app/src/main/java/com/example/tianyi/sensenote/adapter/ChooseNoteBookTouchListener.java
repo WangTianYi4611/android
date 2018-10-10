@@ -13,14 +13,13 @@ import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.adapter.decoration.NoteBookItemDecoration;
 import com.example.tianyi.sensenote.viewgroup.SwipeLeftLinearLayout;
 
-public class StickyRecyclerHeadersTouchListener implements RecyclerView.OnItemTouchListener {
-
+public class ChooseNoteBookTouchListener  implements RecyclerView.OnItemTouchListener  {
     private GestureDetectorCompat mTapDetector;
     private RecyclerView mRecyclerView;
     private NoteBookItemDecoration mDecor;
 
-    public StickyRecyclerHeadersTouchListener(RecyclerView mRecyclerView, NoteBookItemDecoration mDecor) {
-        mTapDetector = new GestureDetectorCompat(mRecyclerView.getContext(), new SingleTapDetector());
+    public ChooseNoteBookTouchListener(RecyclerView mRecyclerView, NoteBookItemDecoration mDecor) {
+        mTapDetector = new GestureDetectorCompat(mRecyclerView.getContext(), new ChooseNoteBookTouchListener.SingleTapDetector());
         this.mRecyclerView = mRecyclerView;
         this.mDecor = mDecor;
     }
@@ -97,7 +96,7 @@ public class StickyRecyclerHeadersTouchListener implements RecyclerView.OnItemTo
                 headerView.onTouchEvent(e);
                 return true;
             }
-            return false;
+            return true;
         }
 
         @Override

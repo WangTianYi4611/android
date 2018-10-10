@@ -10,4 +10,7 @@
     <string name="register_success">注册成功</string>
     <string name="all_note">全部笔记本(0)</string>
     <string name="notebook">笔记本</string>
+    <string name="note_title">标题</string>
+    <string name="note_add_img">插入图片</string>
+    <string name="undefined_title">未命名标题</string>
 </resources>

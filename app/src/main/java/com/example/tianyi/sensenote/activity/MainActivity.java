@@ -1,7 +1,9 @@
 package com.example.tianyi.sensenote.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,18 +13,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 
 import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.fragment.NoteBookFragment;
+import com.example.tianyi.sensenote.fragment.NoteDetailFragment;
 import com.example.tianyi.sensenote.fragment.QuestionFragment;
 import com.example.tianyi.sensenote.util.BitMapUtil;
+import com.example.tianyi.sensenote.util.DensityUtils;
+import com.example.tianyi.sensenote.util.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -31,7 +41,6 @@ public class MainActivity extends AppCompatActivity{
     private FragmentTransaction transaction;
     private QuestionFragment questionFragment;
     private NoteBookFragment noteBookFragment;
-
     private int lastSelectedPosition = 0;
     @BindView(R.id.txtView_main_note)
     public TextView noteFragmentTxtView;
@@ -41,6 +50,8 @@ public class MainActivity extends AppCompatActivity{
     public TextView newsFragmentTxtView;
     @BindView(R.id.txtView_main_control)
     public TextView personalFragmentTxtView;
+
+    private TextView addNewNoteTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,9 +63,36 @@ public class MainActivity extends AppCompatActivity{
     private void init() {
         ButterKnife.bind(this);
         setDefaultFragment();
+        initFixedWindowButton();
     }
 
+    private void initFixedWindowButton() {
+        addNewNoteTextView = new TextView(this);
+        addNewNoteTextView.setText("新");
+        //int padding = DensityUtils.dip2px(this,5);
+        //addNewNoteTextView.setPadding(padding,padding,padding,padding);
+        addNewNoteTextView.setTextSize(DensityUtils.sp2px(this,9));
+        addNewNoteTextView.setGravity(Gravity.CENTER);
+        addNewNoteTextView.setBackground(getResources().getDrawable(R.drawable.circle_red_drawable));
+        WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.TYPE_APPLICATION ,0, PixelFormat.RGBA_8888);
+        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | FLAG_NOT_FOCUSABLE;
+        mLayoutParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+        mLayoutParams.x = 50;
+        mLayoutParams.y = 300;
+        getWindowManager().addView(addNewNoteTextView,mLayoutParams);
+        addNewNoteTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newNoteDetail();
+            }
+        });
+    }
 
+    public void newNoteDetail(){
+        Intent intent = NoteDetailActivity.newIntent(getBaseContext());
+        startActivity(intent);
+    }
 
 
     private void setDefaultFragment() {

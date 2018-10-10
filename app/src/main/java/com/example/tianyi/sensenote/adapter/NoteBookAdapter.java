@@ -30,13 +30,23 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_NORMAL = 2;
+    private NoteBookBean pickedNoteBook;
     private List<NoteBookBean>  noteBooks;
     private Context context;
     private View headerView;
+    private boolean isChoose;
+    private NoteBookAdapter.OnItemClickListener mOnItemClickListener;
 
-    public NoteBookAdapter(Context context) {
+    public NoteBookAdapter(Context context,NoteBookBean pickedNoteBook) {
+        this(context,pickedNoteBook,false);
+
+    }
+
+    public NoteBookAdapter(Context context,NoteBookBean pickedNoteBook,boolean isChoose) {
         this.noteBooks = new ArrayList<>();
         this.context = context;
+        this.pickedNoteBook = pickedNoteBook;
+        this.isChoose = isChoose;
     }
 
     @NonNull
@@ -46,7 +56,7 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return new NoteBookHeadViewHolder(headerView);
         }
         NoteBookItemViewHolder holder = new NoteBookItemViewHolder(LayoutInflater.from(context).
-                inflate(R.layout.adapter_notebook_item, parent, false));
+                inflate(R.layout.adapter_notebook_item, parent, false),mOnItemClickListener);
         return holder;
     }
     //获取每条数据属于哪一分组
@@ -108,19 +118,20 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private NoteBookBean noteBookBean;
         private int position;
 
-        public NoteBookItemViewHolder(@NonNull View itemView) {
+        public NoteBookItemViewHolder(@NonNull View itemView, final OnItemClickListener onItemClickListener) {
             super(itemView);
             this.swipeLeftLinearLayout = (SwipeLeftLinearLayout) itemView;
-            initSwipeItem();
+            if(!isChoose) initSwipeItem();
             noteBookTextView = itemView.findViewById(R.id.textView_notebook_item);
             noteBookTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "note item click", Toast.LENGTH_SHORT).show();
-                    swipeLeftLinearLayout.closeSwipe();
+                    onItemClickListener.onClick(v,position,noteBookBean);
                 }
             });
         }
+
+
 
         private void initSwipeItem() {
             TextView deleteView = new TextView(context);
@@ -147,10 +158,19 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     append("(").append(noteBook.getCount()).
                     append(")").toString();
             noteBookTextView.setText(title);
+            //if(noteBook.getNoteBookName().equals("废纸篓")) swipeLeftLinearLayout.clearSwipeView();
             swipeLeftLinearLayout.closeSwipeInstantly();
+            if(pickedNoteBook != null && pickedNoteBook.getId() == noteBookBean.getId()){
+                noteBookTextView.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.ic_notebook_picked)
+                        ,null,null,null);
+            }
         }
     }
 
+
+    public interface OnItemClickListener{
+        void onClick(View v, int position,NoteBookBean noteBook);
+    }
 
     public class NoteBookHeadViewHolder extends  RecyclerView.ViewHolder{
 
@@ -210,4 +230,11 @@ public class NoteBookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public NoteBookBean getPickedNoteBook() {
+        return pickedNoteBook;
+    }
+
+    public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
 }

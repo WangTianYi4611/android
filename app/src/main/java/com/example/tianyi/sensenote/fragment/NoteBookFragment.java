@@ -1,5 +1,6 @@
 package com.example.tianyi.sensenote.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.tianyi.sensenote.R;
+import com.example.tianyi.sensenote.activity.NoteDetailListActivity;
 import com.example.tianyi.sensenote.adapter.NoteBookAdapter;
 
 import java.util.ArrayList;
@@ -38,10 +40,12 @@ import com.example.tianyi.sensenote.presenter.impl.NoteBookPresenter;
 import com.example.tianyi.sensenote.presenter.interfaces.INoteBookPresenter;
 import com.example.tianyi.sensenote.util.KeyBoardUtil;
 import com.example.tianyi.sensenote.util.StringUtil;
+import com.example.tianyi.sensenote.util.ToastUtil;
 
 import org.w3c.dom.Text;
 
 public class NoteBookFragment extends BaseFragment{
+
 
     public RecyclerView recyclerView;
     private Unbinder unbinder;
@@ -83,11 +87,11 @@ public class NoteBookFragment extends BaseFragment{
             // 需要inflate一个布局文件 填充Fragment
             mView = inflater.inflate(R.layout.fragment_note, container, false);
             initView();
-            initLisenter();
             isPrepared = true;
 //        实现懒加载
             lazyLoad();
         }
+        initLisenter();
         //缓存的mView需要判断是否已经被加过parent， 如果有parent需要从parent删除，要不然会发生这个mView已经有parent的错误。
         ViewGroup parent = (ViewGroup) mView.getParent();
         if (parent != null) {
@@ -143,7 +147,7 @@ public class NoteBookFragment extends BaseFragment{
                 }
                 noteBookSearchEditText.setText("");
                 noteBookSearchEditText.clearFocus();
-                KeyBoardUtil.closeKeybord(noteBookSearchEditText,getContext());
+                KeyBoardUtil.closeKeybord(noteBookSearchEditText,getActivity());
             }
         });
     }
@@ -152,7 +156,7 @@ public class NoteBookFragment extends BaseFragment{
         mAdpter = ((NoteBookAdapter) recyclerView.getAdapter());
         if(StringUtil.isEmpty(notebookName)){ //显示全部内容
             mAdpter.setHeaderView(headerView);
-            mAdpter.setNoteBooks(noteBookPresenter.getAllNoteBook());
+            mAdpter.setNoteBooks(noteBookPresenter.getAllNoteBook(false));
             return;
         }
         if(mAdpter.getHeaderView() != null) mAdpter.removeHeaderView();
@@ -172,21 +176,31 @@ public class NoteBookFragment extends BaseFragment{
         noteBookSearchEditText.setText("");
         noteBookSearchEditText.clearFocus();
         noteBookSearchCancelTextView.setVisibility(View.GONE);
-        mAdpter.setNoteBooks(noteBookPresenter.getAllNoteBook());
+        mAdpter.setNoteBooks(noteBookPresenter.getAllNoteBook(true));
     }
 
     private void initView() {
         noteBookSearchEditText = getActivity().findViewById(R.id.edtTxt_noteMenu_search);
         noteBookSearchCancelTextView = getActivity().findViewById(R.id.textView_notebook_search_cancel);
         recyclerView = find(R.id.recyecle_notebook_notebooklist);
-        mAdpter = new NoteBookAdapter(getActivity());
+        mAdpter = new NoteBookAdapter(getActivity(),null);
         recyclerView.setAdapter(mAdpter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         headerView= LayoutInflater.from(getActivity()).inflate(R.layout.adapter_notebook_header,recyclerView,false);
         mAdpter.setHeaderView(headerView);
+        mAdpter.setmOnItemClickListener(new NoteBookAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(View v, int position,NoteBookBean noteBook) {
+                //ToastUtil.toastMsgShort(getContext(),"note item click postion:" + position);
+                Intent intent = NoteDetailListActivity.newIntent(getContext());
+                intent.putExtra(NoteDetailListFragment.ARG_NOTE_BOOK,noteBook);
+                startActivity(intent);
+            }
+        });
         NoteBookItemDecoration itemDecoration = new NoteBookItemDecoration(getActivity(),mAdpter);
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.addOnItemTouchListener(new StickyRecyclerHeadersTouchListener(recyclerView,itemDecoration));
+
 //        DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
 //        defaultItemAnimator.setAddDuration(1000);
 //        defaultItemAnimator.setRemoveDuration(1000);
@@ -196,7 +210,8 @@ public class NoteBookFragment extends BaseFragment{
     @Override
     public void lazyLoad() {
         noteBookPresenter = NoteBookPresenter.getInstance();
-        mAdpter.setNoteBooks(noteBookPresenter.getAllNoteBook());
+        List<NoteBookBean> noteBooks = noteBookPresenter.getAllNoteBook(true);
+        mAdpter.setNoteBooks(noteBooks);
     }
 
     @Override
