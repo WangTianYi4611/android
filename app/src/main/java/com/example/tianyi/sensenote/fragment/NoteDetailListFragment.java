@@ -1,5 +1,8 @@
 package com.example.tianyi.sensenote.fragment;
 
+import android.app.IntentService;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,14 +20,24 @@ import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.adapter.NoteBookDetailAdatper;
 import com.example.tianyi.sensenote.adapter.decoration.NoteBookDetailDecoration;
 import com.example.tianyi.sensenote.bean.NoteBookBean;
+import com.example.tianyi.sensenote.bean.NoteBookDetailBean;
 import com.example.tianyi.sensenote.presenter.impl.NoteBookDetailPresenter;
 import com.example.tianyi.sensenote.presenter.interfaces.INoteBookDetailPresenter;
+import com.example.tianyi.sensenote.util.CollectionUtils;
+import com.example.tianyi.sensenote.util.ToastUtil;
+
+import java.util.Collections;
+import java.util.List;
 
 public class NoteDetailListFragment extends BaseFragment{
 
     public static final String ARG_NOTE_BOOK = "noteBook";
 
+    public static final String ARG_SEARCH_STRING = "searchString";
+
     private NoteBookBean mNoteBook;
+
+    private String mSearchString;
 
     private RecyclerView mRecyclerView;
 
@@ -31,9 +45,13 @@ public class NoteDetailListFragment extends BaseFragment{
 
     private INoteBookDetailPresenter noteBookDetailPresenter;
 
-    public static NoteDetailListFragment newInstace(NoteBookBean noteBookBean){
+    private int type;
+
+
+    public static NoteDetailListFragment newInstance(NoteBookBean noteBookBean, String searchString){
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_NOTE_BOOK,noteBookBean);
+        bundle.putString(ARG_SEARCH_STRING,searchString);
         NoteDetailListFragment fragment = new NoteDetailListFragment();
         fragment.setArguments(bundle);
         return fragment;
@@ -43,6 +61,8 @@ public class NoteDetailListFragment extends BaseFragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNoteBook = (NoteBookBean)getArguments().getSerializable(ARG_NOTE_BOOK);
+        mSearchString = getArguments().getString(ARG_SEARCH_STRING);
         setActionBar();
         setHasOptionsMenu(true);
     }
@@ -54,8 +74,9 @@ public class NoteDetailListFragment extends BaseFragment{
         actionBar.setDisplayHomeAsUpEnabled(true);
         // 去掉logo图标
         actionBar.setDisplayShowHomeEnabled(false);
-        mNoteBook = (NoteBookBean)getArguments().getSerializable(ARG_NOTE_BOOK);
-        actionBar.setTitle(mNoteBook.getNoteBookName());
+        if(mNoteBook != null) {
+            actionBar.setTitle(mNoteBook.getNoteBookName());
+        }
         //actionBar.setIcon(R.drawable.ic_note_back);
         actionBar.show();
     }
@@ -97,16 +118,77 @@ public class NoteDetailListFragment extends BaseFragment{
         mAdapter = new NoteBookDetailAdatper(getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new NoteBookDetailDecoration(getContext(),mAdapter));
+        if(mSearchString == null) mRecyclerView.addItemDecoration(new NoteBookDetailDecoration(getContext(),mAdapter));
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                if(newState == RecyclerView.SCROLL_STATE_IDLE ){
+//                    mAdapter.setIsIdleState(true);
+//                    mAdapter.notifyDataSetChanged();
+//                }else{
+//                    mAdapter.setIsIdleState(false);
+//                }
+//            }
+//        });
     }
 
     private void initPresenter(){
         noteBookDetailPresenter = new NoteBookDetailPresenter(getContext());
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void updateUI() {
+        if(mNoteBook != null) {
+            mAdapter.setNoteBookDetails(noteBookDetailPresenter.getNoteBookDetailsById(mNoteBook.getId()));
+        }else{
+            //new SearchAsyncTask().execute(mSearchString);
+        }
     }
 
     @Override
     public void lazyLoad() {
-        mAdapter.setNoteBookDetails(noteBookDetailPresenter.getNoteBookDetailsById(mNoteBook.getId()));
+        if(mNoteBook != null) {
+            mAdapter.setNoteBookDetails(noteBookDetailPresenter.getNoteBookDetailsById(mNoteBook.getId()));
+        }else{
+            new SearchAsyncTask().execute(mSearchString);
+        }
     }
+
+    private class SearchAsyncTask extends AsyncTask<String,List<NoteBookDetailBean>,Void>{
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String searchString = strings[0];
+            Integer count = noteBookDetailPresenter.getNoteBookDetailsCount();
+            Log.i("sensenote","note book details count:"+count);
+            int index = 0;
+            int size = 10;
+            while(index < count){
+                List<NoteBookDetailBean> searchResult = noteBookDetailPresenter.getNoteBookDetailsBySearchString(searchString,index,size);
+                publishProgress(searchResult);
+                index += size;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(List<NoteBookDetailBean>... values) {
+            Log.i("sensenote","cur batch search result :" + values[0].toString());
+            if(!CollectionUtils.isEmpty(values[0])) {
+                mAdapter.addNoteBookDetailsToTail(values[0]);
+            }
+            //super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            ToastUtil.toastMsgShort(getContext(),"搜索完成");
+        }
+    }
+
 }

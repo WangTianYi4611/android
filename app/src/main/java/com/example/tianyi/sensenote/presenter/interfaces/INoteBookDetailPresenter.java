@@ -13,4 +13,13 @@ public interface INoteBookDetailPresenter {
     List<NoteBookDetailBean> getAllNoteBookDetails();
 
     List<NoteBookDetailBean> getNoteBookDetailsById(Long noteBookId);
+
+    NoteBookDetailBean getNoteBookDetailByDetailId(Long noteBookDetailId);
+
+    boolean updateNoteBookDetail(List<RichTextEditor.EditData> editData, String title, Long id, Long mNoteBookDetailId);
+
+    Integer getNoteBookDetailsCount();
+
+    List<NoteBookDetailBean> getNoteBookDetailsBySearchString(String searchString,int from,int size);
+
 }

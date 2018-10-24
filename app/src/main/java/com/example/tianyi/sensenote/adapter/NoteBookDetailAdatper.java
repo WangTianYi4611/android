@@ -1,6 +1,8 @@
 package com.example.tianyi.sensenote.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.media.Image;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tianyi.sensenote.R;
+import com.example.tianyi.sensenote.activity.NoteDetailActivity;
+import com.example.tianyi.sensenote.application.SenseNoteApplication;
+import com.example.tianyi.sensenote.bean.NoteBookBean;
 import com.example.tianyi.sensenote.bean.NoteBookDetailBean;
+import com.example.tianyi.sensenote.presenter.impl.NoteBookDetailPresenter;
 import com.example.tianyi.sensenote.util.DateUtil;
+import com.example.tianyi.sensenote.util.DensityUtils;
+import com.example.tianyi.sensenote.util.ImageLoader;
+import com.example.tianyi.sensenote.util.StringUtil;
 
 import org.w3c.dom.Text;
 
@@ -30,13 +39,19 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
     private List<NoteBookDetailBean> noteBookDetails;
     private Context mContext;
     private Map<Integer,Integer> headerIdMap;
+    private ImageLoader mImageLoder;
+    private boolean isIdleState;
 
 
     public NoteBookDetailAdatper(Context mContext) {
         this.mContext = mContext;
         noteBookDetails = new ArrayList<>();
         headerIdMap = new HashMap<>();
+        this.mImageLoder = ((SenseNoteApplication) mContext.getApplicationContext()).getmImageLoader();
+        this.isIdleState = true;
     }
+
+
 
     @NonNull
     @Override
@@ -56,6 +71,10 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         if(noteBookDetails.size() == 0) return;
         ((NoteBookDetailViewHolder)viewHolder).setNoteBookDetailBean(noteBookDetails.get(position));
+    }
+
+    public void setIsIdleState(boolean isIdleState) {
+        this.isIdleState = isIdleState;
     }
 
     public class NoteBookDetailEmptyViewHolder extends RecyclerView.ViewHolder{
@@ -114,6 +133,7 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
         TextView noteBookDetailContent;
         ImageView noteBookDetailImg;
         TextView noteBookDetailDate;
+        View itemView;
         NoteBookDetailBean noteBookDetailBean;
 
 
@@ -127,6 +147,16 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
             noteBookDetailContent = itemView.findViewById(R.id.textView_notebookdetaillist_content);
             noteBookDetailDate = itemView.findViewById(R.id.textView_notebookdetaillist_date);
             noteBookDetailImg = itemView.findViewById(R.id.imgView_notebookdetaillist_pic);
+            this.itemView = itemView;
+            this.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = NoteDetailActivity.newIntent(mContext);
+                    intent.putExtra(NoteDetailActivity.ARG_INTENT_NOTEBOOK,noteBookDetailBean.getNoteBookBean());
+                    intent.putExtra(NoteDetailActivity.ARG_INTENT_NOTEBOOK_DETAIL_ID,noteBookDetailBean.getId());
+                    mContext.startActivity(intent);
+                }
+            });
         }
 
 
@@ -134,7 +164,18 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
             this.noteBookDetailBean = noteBookDetailBean;
             noteBookDetailTitle.setText(noteBookDetailBean.getNoteBookDetailTitle());
             noteBookDetailContent.setText(getSummary(noteBookDetailBean.getContent()));
+            //Log.i("sensenote",));
             noteBookDetailDate.setText(DateUtil.dateFormat(noteBookDetailBean.getCreateTime(),DateUtil.DATE_PATTERN));
+            String imagePath = getImage(noteBookDetailBean.getContent());
+            if(!StringUtil.isEmpty(imagePath)){
+                //noteBookDetailImg.setVisibility(View.VISIBLE);
+                Log.i("sensenote","image loader loading");
+                mImageLoder.bindBitmap(getImage(noteBookDetailBean.getContent()),noteBookDetailImg,noteBookDetailContent.getWidth(),
+                        DensityUtils.dip2px(mContext,200));
+            }else if(StringUtil.isEmpty(imagePath)){
+                noteBookDetailImg.setVisibility(View.GONE);
+            }
+
         }
 
         public String getSummary(List<String> contents){
@@ -145,7 +186,20 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
             }
             return "";
         }
+        public String getImage(List<String> contents){
+            for(String content:contents){
+                if(content.startsWith("<img")){
+                    return NoteBookDetailPresenter.getImg(content);
+                }
+            }
+            return "";
+        }
+
     }
+
+
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -165,6 +219,14 @@ public class NoteBookDetailAdatper extends RecyclerView.Adapter<RecyclerView.Vie
         constructHeaderIdMap(noteBookDetails);
         notifyDataSetChanged();
     }
+
+    public void addNoteBookDetailsToTail(List<NoteBookDetailBean> noteBookDetails){
+        int oldCount = this.noteBookDetails.size();
+        this.noteBookDetails.addAll(noteBookDetails);
+        notifyDataSetChanged();
+        //notifyItemRangeInserted(oldCount,noteBookDetails.size());
+    }
+
 
     private void constructHeaderIdMap(List<NoteBookDetailBean> noteBookDetails) {
         if(noteBookDetails.size() == 0) return;

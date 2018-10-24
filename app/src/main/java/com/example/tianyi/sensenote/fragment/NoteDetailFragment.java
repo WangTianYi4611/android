@@ -30,6 +30,7 @@ import com.example.tianyi.sensenote.activity.LoginActivity;
 import com.example.tianyi.sensenote.activity.MainActivity;
 import com.example.tianyi.sensenote.activity.NoteDetailActivity;
 import com.example.tianyi.sensenote.bean.NoteBookBean;
+import com.example.tianyi.sensenote.bean.NoteBookDetailBean;
 import com.example.tianyi.sensenote.presenter.impl.NoteBookDetailPresenter;
 import com.example.tianyi.sensenote.presenter.impl.NoteBookPresenter;
 import com.example.tianyi.sensenote.presenter.interfaces.INoteBookDetailPresenter;
@@ -41,6 +42,7 @@ import com.sendtion.xrichtext.RichTextEditor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class NoteDetailFragment extends BaseFragment{
 
@@ -59,6 +61,7 @@ public class NoteDetailFragment extends BaseFragment{
     private INoteBookPresenter noteBookPresenter;
     private INoteBookDetailPresenter noteBookDetailPresenter;
     private NoteBookBean mNoteBook;
+    private Long mNoteBookDetailId;
 
 
     public static NoteDetailFragment newInstance(NoteBookBean noteBook, Long noteBookDetailId){
@@ -115,13 +118,20 @@ public class NoteDetailFragment extends BaseFragment{
 
     private void processCreateNoteBook() {
         String title = noteBookDetailTitle.getText().toString();
-        if(StringUtil.isEmpty(title)){
-            ToastUtil.toastMsgShort(getContext(),"标题不能为空");
+        if (StringUtil.isEmpty(title)) {
+            ToastUtil.toastMsgShort(getContext(), "标题不能为空");
             return;
         }
-        boolean result = noteBookDetailPresenter.addNoteBookDetail(richTextEditor.buildEditData(),title,mNoteBook.getId());
-        if(!result){
-            ToastUtil.toastMsgShort(getContext(),"插入失败 联系管理员");
+        if(mNoteBookDetailId == null) {//新建
+            boolean result = noteBookDetailPresenter.addNoteBookDetail(richTextEditor.buildEditData(), title, mNoteBook.getId());
+            if (!result) {
+                ToastUtil.toastMsgShort(getContext(), "插入失败 联系管理员");
+            }
+        }else{
+            boolean result = noteBookDetailPresenter.updateNoteBookDetail(richTextEditor.buildEditData(),title,mNoteBook.getId(),mNoteBookDetailId);
+            if (!result) {
+                ToastUtil.toastMsgShort(getContext(), "插入失败 联系管理员");
+            }
         }
         getActivity().finish();
     }
@@ -256,12 +266,35 @@ public class NoteDetailFragment extends BaseFragment{
             return;
         }
         //填充内容
-        //Integer noteBookId = getArguments().getInt(ARG_NOTE_BOOK_ID);
+        mNoteBookDetailId = getArguments().getLong(ARG_NOTE_DETAIL_ID,-1);
         mNoteBook = (NoteBookBean) getArguments().getSerializable(ARG_NOTE_BOOK);
         if(mNoteBook == null){//新建
             mNoteBook = noteBookPresenter.getDefaultNoteBook();
         }
         notebookTxtView.setText(mNoteBook.getNoteBookName());
+        if(mNoteBookDetailId != -1) {
+            supplyNoteDetailContent(mNoteBookDetailId);
+        }
         mHasLoadedOnce = true;
+    }
+
+    private void supplyNoteDetailContent(Long noteBookDetailId) {
+        richTextEditor.clearAllLayout();
+        NoteBookDetailBean noteBookDetail = noteBookDetailPresenter.getNoteBookDetailByDetailId(noteBookDetailId);
+        List<String> contents = noteBookDetail.getContent();
+        for(String content : contents){
+            if(content.startsWith("<img")){
+                String imagePath = NoteBookDetailPresenter.getImg(content);
+                richTextEditor.addImageViewAtIndex(richTextEditor.getLastIndex(),imagePath);
+            }else{
+                richTextEditor.addEditTextAtIndex(richTextEditor.getLastIndex(),content);
+            }
+        }
+        noteBookDetailTitle.setText(noteBookDetail.getNoteBookDetailTitle());
+    }
+
+    public void setNoteBookBean(NoteBookBean noteBookBean) {
+        mNoteBook = noteBookBean;
+        notebookTxtView.setText(mNoteBook.getNoteBookName());
     }
 }

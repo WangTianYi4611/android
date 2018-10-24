@@ -9,9 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.tianyi.sensenote.bean.UserBean;
 import com.example.tianyi.sensenote.dao.DaoMaster;
 import com.example.tianyi.sensenote.dao.DaoSession;
+import com.example.tianyi.sensenote.dao.MySQLiteOpenHelper;
 import com.example.tianyi.sensenote.dao.NoteBookEntityDao;
 import com.example.tianyi.sensenote.httpservice.RetrofitClient;
 import com.example.tianyi.sensenote.service.InitializeService;
+import com.example.tianyi.sensenote.util.ImageLoader;
 import com.example.tianyi.sensenote.util.SaveToLocalUtil;
 
 public class SenseNoteApplication extends Application {
@@ -22,6 +24,8 @@ public class SenseNoteApplication extends Application {
 
     private UserBean userBean;
 
+    private ImageLoader mImageLoader;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,10 +33,12 @@ public class SenseNoteApplication extends Application {
 
         initGreenDao();
         InitializeService.start(this);
+        mImageLoader = ImageLoader.build(this);
     }
 
+    //这块的东西其实可以搞一个单例模式
     private void initGreenDao() {
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "sensenote-db", null);
+        MySQLiteOpenHelper helper = new MySQLiteOpenHelper(this, "sensenote-db", null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         mDaoSession = daoMaster.newSession();
@@ -59,4 +65,7 @@ public class SenseNoteApplication extends Application {
     }
 
 
+    public ImageLoader getmImageLoader() {
+        return mImageLoader;
+    }
 }

@@ -17,6 +17,8 @@ public interface INoteBookPresenter {
 
     List<NoteBookBean> getSearchNoteBook(String noteBookName);
 
+    NoteBookBean getNoteBookById(Long notebookId);
+
     NoteBookBean getDefaultNoteBook();
 
 }

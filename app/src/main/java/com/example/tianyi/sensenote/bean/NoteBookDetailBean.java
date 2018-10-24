@@ -9,6 +9,7 @@ public class NoteBookDetailBean {
 
     private Long id;
 
+    //暂时没用
     private Long noteBookId;
 
     private String noteBookDetailTitle;
@@ -16,6 +17,9 @@ public class NoteBookDetailBean {
     private Date createTime;
 
     private List<String> content;
+
+    private NoteBookBean noteBookBean;
+
 
     public Long getId() {
         return id;
@@ -55,5 +59,25 @@ public class NoteBookDetailBean {
 
     public void setContent(List<String> content) {
         this.content = content;
+    }
+
+    public NoteBookBean getNoteBookBean() {
+        return noteBookBean;
+    }
+
+    public void setNoteBookBean(NoteBookBean noteBookBean) {
+        this.noteBookBean = noteBookBean;
+    }
+
+    @Override
+    public String toString() {
+        return "NoteBookDetailBean{" +
+                "id=" + id +
+                ", noteBookId=" + noteBookId +
+                ", noteBookDetailTitle='" + noteBookDetailTitle + '\'' +
+                ", createTime=" + createTime +
+                ", content=" + content +
+                ", noteBookBean=" + noteBookBean +
+                '}';
     }
 }

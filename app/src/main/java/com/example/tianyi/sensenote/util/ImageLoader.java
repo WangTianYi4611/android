@@ -12,14 +12,17 @@ import android.support.annotation.NonNull;
 
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
+import android.view.View;
 import android.widget.ImageView;
 
+import com.example.tianyi.sensenote.R;
 import com.jakewharton.disklrucache.DiskLruCache;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -42,7 +45,7 @@ public class ImageLoader {
 
     private static final long KEEP_ALIVE = 10L;
 
-    private static final int TAG_KEY_URI = 0;
+    private static final int TAG_KEY_URI = R.id.TAG_KEY_URI;
     private static final long DISK_CACHE_SIZE = 1024*1024*50;
     private static final int IO_BUFFER_SIZE = 8 * 1024;
     private static final int DISK_CACHE_INDEX = 0;
@@ -64,10 +67,11 @@ public class ImageLoader {
         public void handleMessage(Message msg) {
             LoaderResult result = (LoaderResult) msg.obj;
             ImageView imageView = result.imageView;
-            imageView.setImageBitmap(result.bitmap);
+            //imageView.setImageBitmap(result.bitmap);
             String uri = (String) imageView.getTag(TAG_KEY_URI);
             if(uri.equals(result.uri)){
                 imageView.setImageBitmap(result.bitmap);
+                imageView.setVisibility(View.VISIBLE);
             }else{
                 //ignore
             }
@@ -123,6 +127,7 @@ public class ImageLoader {
         Bitmap bitmap = loadBitmapFromMemCache(uri);
         if(bitmap != null){
             imageView.setImageBitmap(bitmap);
+            imageView.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -148,6 +153,28 @@ public class ImageLoader {
             bitmap = loadBitmapFromDiskCache(uri,reqWidth,reqHeight);
         }catch (Exception e){
 
+        }
+        if(bitmap != null){
+            return bitmap;
+        }
+        bitmap = loadBitmapFromDisk(uri,reqWidth,reqHeight);
+
+        return bitmap;
+    }
+
+    private Bitmap loadBitmapFromDisk(String uri, int reqWidth, int reqHeight) {
+        Bitmap bitmap = mImageResizer.decodeSampledBitmapFromFilePath(uri,reqWidth,reqHeight);
+
+        String key = hashKeyFromUrl(uri);
+        DiskLruCache.Editor editor = null;
+        try {
+            editor = mDiskLruCache.edit(key);
+            OutputStream outputStream  = editor.newOutputStream(DISK_CACHE_INDEX);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+            editor.commit();
+            addBitMapToMermoryCache(key,bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return bitmap;
     }
@@ -175,13 +202,13 @@ public class ImageLoader {
 
     private String hashKeyFromUrl(String url){
         String cacheKey;
-        try{
-            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(url.getBytes());
-            cacheKey = bytesToHexString(mDigest.digest());
-        }catch (Exception e){
+//        try{
+//            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
+//            mDigest.update(url.getBytes());
+//            cacheKey = bytesToHexString(mDigest.digest());
+//        }catch (Exception e){
             cacheKey = String .valueOf(url.hashCode());
-        }
+        //}
         return cacheKey;
     }
 

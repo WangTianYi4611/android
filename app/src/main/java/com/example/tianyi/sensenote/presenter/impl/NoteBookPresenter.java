@@ -30,10 +30,9 @@ public class NoteBookPresenter implements INoteBookPresenter {
     private List<NoteBookBean> allNoteBooks;
 
 
-    public NoteBookPresenter() {
+    private NoteBookPresenter() {
         this.mContext = SenseNoteApplication.getInstance().getApplicationContext();
         this.noteBookEntityDao = ((SenseNoteApplication) mContext).getDaoSession().getNoteBookEntityDao();
-
     }
 
     public static NoteBookPresenter getInstance(){
@@ -107,6 +106,11 @@ public class NoteBookPresenter implements INoteBookPresenter {
             }
         }
         return searchNoteBooks;
+    }
+
+    @Override
+    public NoteBookBean getNoteBookById(Long notebookId) {
+        return convertEntityToBean(noteBookEntityDao.load(notebookId));
     }
 
     @Override

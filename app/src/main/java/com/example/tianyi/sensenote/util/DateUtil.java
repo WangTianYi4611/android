@@ -17,6 +17,7 @@ public class DateUtil {
     public static final String YEAR_PATTERN = "yyyy";
     public static final String MINUTE_ONLY_PATTERN = "mm";
     public static final String HOUR_ONLY_PATTERN = "HH";
+    public static final String CUSTOM_TIME_PATTERN = "yyyyMMddHHmmss";
 
     /**
      * 日期相加减天数

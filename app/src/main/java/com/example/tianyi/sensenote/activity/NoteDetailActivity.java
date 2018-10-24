@@ -14,9 +14,20 @@ import com.example.tianyi.sensenote.fragment.RegisterFragment;
 
 public class NoteDetailActivity extends SingleFragmentActivity{
 
+    private NoteDetailFragment mNoteDetailFragment;
+    private NoteBookChooseFragment mNoteBookChooseFragment;
+    public static String ARG_INTENT_NOTEBOOK = "notebook";
+    public static String ARG_INTENT_NOTEBOOK_DETAIL_ID ="notebookDetailId";
+
+
     @Override
     protected Fragment createFragment() {
-        return NoteDetailFragment.newInstance(null,null);
+        Intent intent = getIntent();
+        NoteBookBean noteBookBean = (NoteBookBean) intent.getSerializableExtra(ARG_INTENT_NOTEBOOK);
+        Long noteBookDetailId = intent.getLongExtra(ARG_INTENT_NOTEBOOK_DETAIL_ID,-1);
+        if(noteBookDetailId == -1) noteBookDetailId = null;
+        mNoteDetailFragment = NoteDetailFragment.newInstance(noteBookBean,noteBookDetailId);
+        return mNoteDetailFragment;
     }
 
     public static Intent newIntent(Context context){
@@ -24,15 +35,21 @@ public class NoteDetailActivity extends SingleFragmentActivity{
     }
 
     public void setChooseNoteBookFragement(String noteBookName){
+        mNoteBookChooseFragment = NoteBookChooseFragment.newInstance(noteBookName);
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, NoteBookChooseFragment.newInstance(noteBookName));
+        transaction.hide(mNoteDetailFragment);
+        transaction.add(R.id.fragment_container,mNoteBookChooseFragment);
+        //transaction.replace(R.id.fragment_container, NoteBookChooseFragment.newInstance(noteBookName));
         //transaction.addToBackStack(null);
         transaction.commit();
     }
 
     public void backToNoteDetailFragement(NoteBookBean noteBookBean){
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, NoteDetailFragment.newInstance(noteBookBean,null));
+        transaction.hide(mNoteBookChooseFragment);
+        transaction.show(mNoteDetailFragment);
+        mNoteDetailFragment.setNoteBookBean(noteBookBean);
+        //transaction.add(R.id.fragment_container, NoteDetailFragment.newInstance(noteBookBean,null));
         //transaction.addToBackStack(null);
         transaction.commit();
     }

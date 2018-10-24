@@ -24,6 +24,7 @@ import com.example.tianyi.sensenote.R;
 import com.example.tianyi.sensenote.fragment.NoteBookFragment;
 import com.example.tianyi.sensenote.fragment.NoteDetailFragment;
 import com.example.tianyi.sensenote.fragment.QuestionFragment;
+import com.example.tianyi.sensenote.fragment.SearchNoteDetailFragment;
 import com.example.tianyi.sensenote.util.BitMapUtil;
 import com.example.tianyi.sensenote.util.DensityUtils;
 import com.example.tianyi.sensenote.util.ToastUtil;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity{
     private FragmentTransaction transaction;
     private QuestionFragment questionFragment;
     private NoteBookFragment noteBookFragment;
+    private SearchNoteDetailFragment mSearchNoteDetailFragment;
     private int lastSelectedPosition = 0;
     @BindView(R.id.txtView_main_note)
     public TextView noteFragmentTxtView;
@@ -108,29 +110,34 @@ public class MainActivity extends AppCompatActivity{
         transaction = fragmentManager.beginTransaction();
         int viewId = view.getId();
         Log.i("click","out click");
+        clearClickStatus();
         switch (viewId) {
             case R.id.txtView_main_note:
                 if (noteBookFragment == null) {
                     noteBookFragment = NoteBookFragment.newInstance();
                 }
                 transaction.replace(R.id.layFrame, noteBookFragment);
+                noteFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note_fill),null,null);
                 break;
             case R.id.txtView_main_search:
-                if (questionFragment == null) {
-                    questionFragment = QuestionFragment.newInstance();
+                if (mSearchNoteDetailFragment == null) {
+                    mSearchNoteDetailFragment = SearchNoteDetailFragment.newInstance();
                 }
-                transaction.replace(R.id.layFrame, questionFragment);
+                transaction.replace(R.id.layFrame, mSearchNoteDetailFragment);
+                searchFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note_fill),null,null);
                 break;
             case R.id.txtView_main_news:
                 if (questionFragment == null) {
                     questionFragment = QuestionFragment.newInstance();
                 }
                 transaction.replace(R.id.layFrame, questionFragment);
+                newsFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note_fill),null,null);
                 break;
             case R.id.txtView_main_control:
                 if (questionFragment == null) {
                     questionFragment = QuestionFragment.newInstance();
                 }
+                personalFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note_fill),null,null);
                 transaction.replace(R.id.layFrame, questionFragment);
                 break;
             default:
@@ -138,6 +145,13 @@ public class MainActivity extends AppCompatActivity{
         }
         // 事务提交
         transaction.commit();
+    }
+
+    public void clearClickStatus(){
+        noteFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note),null,null);
+        searchFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note),null,null);
+        newsFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note),null,null);
+        personalFragmentTxtView.setCompoundDrawablesWithIntrinsicBounds(null,getResources().getDrawable(R.drawable.icon_note),null,null);
     }
 
 

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView_notebookdetaillist_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:layout_marginLeft="20dp"
+        android:gravity="center_vertical"
         android:paddingTop="5dp"
         android:text="@string/undefined_title"
         android:textColor="@android:color/black"
@@ -28,11 +27,12 @@
 
     <ImageView
         android:id="@+id/imgView_notebookdetaillist_pic"
-        android:visibility="gone"
         android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_marginLeft="20dp"
-        android:layout_height="60dp"
-        android:scaleType="centerCrop"/>
+        android:layout_marginRight="20dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textView_notebookdetaillist_date"

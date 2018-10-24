@@ -13,4 +13,6 @@
     <string name="note_title">标题</string>
     <string name="note_add_img">插入图片</string>
     <string name="undefined_title">未命名标题</string>
+    <string name="recent_search">最近搜索</string>
+    <string name="search_notebook_detail_hint">请输入内容对笔记进行检索</string>
 </resources>

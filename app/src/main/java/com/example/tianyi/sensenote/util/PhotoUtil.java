@@ -18,7 +18,7 @@ public class PhotoUtil {
 
     public static String generateRandomPhotoName(){
         StringBuffer result= new StringBuffer();
-        result.append("IMG_").append(UUID.randomUUID().toString()).append("_").append(new Date().toString());
+        result.append("IMG_").append(UUID.randomUUID().toString()).append("_").append(DateUtil.dateFormat(new Date(),DateUtil.CUSTOM_TIME_PATTERN));
         return result.toString();
     }
 

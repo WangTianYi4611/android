@@ -12,6 +12,7 @@ import com.example.tianyi.sensenote.dao.NoteBookEntityDao;
 import com.example.tianyi.sensenote.dao.entity.NoteBookDetailEntity;
 import com.example.tianyi.sensenote.dao.entity.NoteBookEntity;
 import com.example.tianyi.sensenote.presenter.interfaces.INoteBookDetailPresenter;
+import com.example.tianyi.sensenote.presenter.interfaces.INoteBookPresenter;
 import com.example.tianyi.sensenote.util.StringUtil;
 import com.sendtion.xrichtext.RichTextEditor;
 
@@ -36,12 +37,15 @@ public class NoteBookDetailPresenter implements INoteBookDetailPresenter{
 
     private DaoSession mDaoSession;
 
+    private INoteBookPresenter noteBookPresenter;
+
 
     public NoteBookDetailPresenter(Context context){
         this.mContext = context;
         this.mDaoSession = ((SenseNoteApplication) context.getApplicationContext()).getDaoSession();
         this.noteBookDetailEntityDao = mDaoSession.getNoteBookDetailEntityDao();
         this.noteBookEntityDao = mDaoSession.getNoteBookEntityDao();
+        this.noteBookPresenter = NoteBookPresenter.getInstance();
     }
 
 
@@ -110,16 +114,66 @@ public class NoteBookDetailPresenter implements INoteBookDetailPresenter{
             }
         });
         List<NoteBookDetailBean> result = new ArrayList<>();
-        for(NoteBookDetailEntity noteBookEntity : noteBookDetailEntities){
-            NoteBookDetailBean noteBookDetailBean = new NoteBookDetailBean();
-            noteBookDetailBean.setId(noteBookEntity.getId());
-            noteBookDetailBean.setCreateTime(noteBookEntity.getCreateTime());
-            noteBookDetailBean.setNoteBookId(noteBookEntity.getNoteBookId());
-            noteBookDetailBean.setNoteBookDetailTitle(noteBookEntity.getNoteBookDetailTitle());
-            noteBookDetailBean.setContent(deseriliaze(noteBookEntity.getContent()));
-            result.add(noteBookDetailBean);
+        for(NoteBookDetailEntity noteBookDetailEntity : noteBookDetailEntities){
+            result.add(convertNoteBookDetailEntityToBean(noteBookDetailEntity));
         }
         return result;
+    }
+
+    @Override
+    public NoteBookDetailBean getNoteBookDetailByDetailId(Long noteBookDetailId) {
+        NoteBookDetailEntity noteBookDetailEntity = noteBookDetailEntityDao.load(noteBookDetailId);
+        return convertNoteBookDetailEntityToBean(noteBookDetailEntity);
+    }
+
+    @Override
+    public boolean updateNoteBookDetail(List<RichTextEditor.EditData> editData, String title, Long noteBookId, Long noteBookDetailId) {
+        try {
+            NoteBookDetailEntity originDetail = noteBookDetailEntityDao.load(noteBookDetailId);
+            NoteBookDetailEntity noteBookDetailEntity = new NoteBookDetailEntity();
+            Date date = new Date();
+            noteBookDetailEntity.setId(noteBookDetailId);
+            noteBookDetailEntity.setContent(serilizeContent(editData));
+            noteBookDetailEntity.setNoteBookId(noteBookId);
+            noteBookDetailEntity.setNoteBookDetailTitle(title);
+            noteBookDetailEntity.setCreateTime(originDetail.getCreateTime());
+            noteBookDetailEntity.setUpdateTime(date);
+            noteBookDetailEntityDao.update(noteBookDetailEntity);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Integer getNoteBookDetailsCount() {
+        return (int) noteBookDetailEntityDao.count();
+    }
+
+    @Override
+    public List<NoteBookDetailBean> getNoteBookDetailsBySearchString(String searchString, int from, int size) {
+        List<NoteBookDetailEntity> entities = noteBookDetailEntityDao.queryBuilder().offset(from).limit(size).list();
+        List<NoteBookDetailBean> result = new ArrayList<>();
+        for(NoteBookDetailEntity entity:entities){
+            if(entity.getContent().contains(searchString)){
+                result.add(convertNoteBookDetailEntityToBean(entity));
+            }
+        }
+        return result;
+    }
+
+
+    public NoteBookDetailBean convertNoteBookDetailEntityToBean(NoteBookDetailEntity noteBookDetailEntity){
+        NoteBookDetailBean noteBookDetailBean = new NoteBookDetailBean();
+        noteBookDetailBean.setId(noteBookDetailEntity.getId());
+        noteBookDetailBean.setCreateTime(noteBookDetailEntity.getCreateTime());
+        if(noteBookDetailBean.getCreateTime() == null) noteBookDetailBean.setCreateTime(new Date());
+        noteBookDetailBean.setNoteBookId(noteBookDetailEntity.getNoteBookId());
+        noteBookDetailBean.setNoteBookDetailTitle(noteBookDetailEntity.getNoteBookDetailTitle());
+        noteBookDetailBean.setContent(deseriliaze(noteBookDetailEntity.getContent()));
+        noteBookDetailBean.setNoteBookBean(noteBookPresenter.getNoteBookById(noteBookDetailEntity.getNoteBookId()));
+
+        return noteBookDetailBean;
     }
 
 
@@ -127,11 +181,11 @@ public class NoteBookDetailPresenter implements INoteBookDetailPresenter{
         List<String> editDatas = curWordsByImgTag(content);
         List<String> result = new ArrayList<>();
         for(String editData:editDatas){
-               if(editData.startsWith("<img")){
+//               if(editData.startsWith("<img")){
+//                   result.add(editData);
+//               }else{
                    result.add(editData);
-               }else{
-                   result.add(editData);
-               }
+   //            }
         }
         return result;
     }

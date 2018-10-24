@@ -41,12 +41,16 @@ import com.example.tianyi.sensenote.presenter.interfaces.INoteBookPresenter;
 import com.example.tianyi.sensenote.util.KeyBoardUtil;
 import com.example.tianyi.sensenote.util.StringUtil;
 import com.example.tianyi.sensenote.util.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.w3c.dom.Text;
 
 public class NoteBookFragment extends BaseFragment{
 
-
+    public RefreshLayout mRefreshLayout;
     public RecyclerView recyclerView;
     private Unbinder unbinder;
     private INoteBookPresenter noteBookPresenter;
@@ -180,6 +184,19 @@ public class NoteBookFragment extends BaseFragment{
     }
 
     private void initView() {
+        mRefreshLayout = find(R.id.refreshLayout);
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+            }
+        });
+        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+            }
+        });
         noteBookSearchEditText = getActivity().findViewById(R.id.edtTxt_noteMenu_search);
         noteBookSearchCancelTextView = getActivity().findViewById(R.id.textView_notebook_search_cancel);
         recyclerView = find(R.id.recyecle_notebook_notebooklist);
